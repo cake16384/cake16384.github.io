@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>興福國中無線網路登入頁面</title>
+    <style>
+        body {
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: "Microsoft JhengHei", sans-serif;
+        }
+
+        .login-container {
+            background-color: #cccccc;
+            border: 2px solid red;
+            width: 500px;
+            padding: 20px;
+            text-align: center;
+        }
+
+
+
+        h2 {
+            margin: 1px 0;
+            letter-spacing: 1px;
+        }
+
+        .info-box {
+            background-color: white;
+            border: 1px solid rgb(45, 167, 184);
+            padding: 15px;
+            text-align: left;
+            font-size: 13px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .login-form {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .form-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .input-group label {
+            width: 60px;
+            font-weight: bold;
+            text-align: right;
+            margin-right: 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 5px;
+            border: 1px solid #777;
+        }
+
+        .submit-container {
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 5px 10px;
+            background-color: #e1e1e1;
+            border: 1px solid #777;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <div class="logo-box">
+        <div class="logo-placeholder"><img src="./image2.png" alt=""></div>
+    </div>
+    <h2>興福國中無線網路</h2>
+    <div class="info-box">
+        歡迎使用興福國中無線網路，本校僅供校園無線上網用。本校教師如在校園使用無線上網，您必須要有教育局核配的帳號才能無線上網。無線上網過程會先經由教育局帳號驗證伺服器做帳號驗證動作。若您之前已經有台北市教育入口網會員帳號，且經該網站確認是教師身份，您就可以該帳號連結無線網路上網，不需要再申請無線上網帳號。若您是教師，但沒有台北市教育入口網會員帳號，您需先經有線區域網路，自行連結台北市教育入口網 <a href="http://www.tp.edu.tw">http://www.tp.edu.tw</a> 申請無線上網帳號，申請過程如下列「臺北市教育入口網 帳號申請流程」所示。請勾選我同意使用此網路條款後輸入帳號密碼。
+    </div>
+
+    <div class="login-form">
+        <div class="form-title">請輸入帳號密碼</div>
+        
+        <div class="input-group">
+            <label>帳號:</label>
+            <input type="text">
+        </div>
+        
+        <div class="input-group">
+            <label>密碼:</label>
+            <input type="password">
+        </div>
+
+        <div class="submit-container">
+            <button type="button">登入</button>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
