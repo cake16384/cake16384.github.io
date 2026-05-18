@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>會員登入驗證</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: "Microsoft JhengHei", sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 20px 40px 20px;
+        }
+
+        /* 頂部外層容器：用來包覆最上面的大標題與導覽列 */
+        .header-wrapper {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* 確保內容靠左對齊 */
+            margin-bottom: 30px;
+        }
+
+        /* 新增：最上面偏左的大標題 */
+        .site-title {
+            font-size: 24px;
+            color: #007b88; /* 稍深的青綠色，凸顯標題層次 */
+            font-weight: bold;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        /* 頂部導覽按鈕區 */
+        .nav-container {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .nav-btn {
+            border: 2px solid #00a0b0;
+            border-radius: 10px;
+            color: #00a0b0;
+            background-color: #ffffff;
+            padding: 12px 24px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .nav-btn.active {
+            background-color: #00a0b0;
+            color: #ffffff;
+        }
+
+        /* 主標題區 */
+        .main-title {
+            width: 100%;
+            max-width: 900px;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333333;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #00a0b0;
+            margin-bottom: 30px;
+            letter-spacing: 4px;
+        }
+
+        /* 登入表單容器 */
+        .login-container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding-left: 50px;
+        }
+
+        /* 身份切換頁籤 */
+        .tab-container {
+            display: flex;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            border: none;
+            font-size: 18px;
+            padding: 10px 35px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tab-individual {
+            background-color: #00a2d1;
+            color: white;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+        }
+
+        .tab-group {
+            background-color: #999999;
+            color: white;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        /* 表單列結構 */
+        .form-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+
+        .input-field {
+            width: 350px;
+            height: 45px;
+            border: 1px solid #999999;
+            padding: 10px;
+            font-size: 16px;
+            color: #333333;
+        }
+
+        .input-field::placeholder {
+            color: #a9a9a9;
+        }
+
+        /* 側邊提示文字與連結 */
+        .hint-text {
+            margin-left: 20px;
+            font-size: 16px;
+            color: #333333;
+        }
+
+        .link-blue {
+            color: #0000ff;
+            text-decoration: underline;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .link-purple {
+            color: #660099;
+            text-decoration: underline;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* 驗證碼區塊 */
+        .captcha-box {
+            background-color: #f0f5d8;
+            border: 1px solid #dcdcdc;
+            width: 150px;
+            height: 45px;
+            margin-left: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            font-style: italic;
+            color: #b33939;
+            letter-spacing: 5px;
+            user-select: none;
+        }
+
+        .captcha-actions {
+            margin-left: 15px;
+            font-size: 14px;
+            color: #333333;
+            line-height: 1.4;
+        }
+
+        /* 按鈕區 */
+        .btn-row {
+            display: flex;
+            gap: 15px;
+            margin-top: 15px;
+            width: 350px;
+        }
+
+        .action-btn {
+            flex: 1;
+            height: 40px;
+            border: none;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            letter-spacing: 2px;
+        }
+
+        .btn-submit {
+            background-color: #2b658a;
+        }
+
+        .btn-reset {
+            background-color: #3b6e91;
+        }
+
+        /* 底部裝飾線 */
+        .bottom-line {
+            width: 100%;
+            max-width: 900px;
+            border-bottom: 2px solid #00a0b0;
+            margin-top: 60px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-wrapper">
+        <h1 class="site-title">會員登入驗證</h1>
+
+        <div class="nav-container">
+            <a href="#" class="nav-btn active">加入/登入</a>
+            <a href="#" class="nav-btn">我要報名</a>
+            <a href="#" class="nav-btn">報名/繳費<br>資料查詢</a>
+            <a href="#" class="nav-btn">相關操作說明</a>
+            <a href="#" class="nav-btn">相關問題解答</a>
+            <a href="#" class="nav-btn">線上申請</a>
+            <a href="#" class="nav-btn">申請文件下載</a>
+        </div>
+    </div>
+
+    <div class="main-title">會員登入</div>
+
+    <div class="login-container">
+        
+        <div class="tab-container">
+            <button class="tab-btn tab-individual">個人</button>
+            <button class="tab-btn tab-group">團體經辦人</button>
+        </div>
+
+        <div class="form-row">
+            <input type="text" class="input-field" placeholder="考生身分證件號碼(外籍人士統一證號)">
+            <span class="hint-text">還未加入會員者，請<span class="link-blue">按此申請</span></span>
+        </div>
+
+        <div class="form-row">
+            <input type="password" class="input-field" placeholder="密碼">
+            <span class="hint-text"><span class="link-purple">忘記密碼</span></span>
+        </div>
+
+        <div class="form-row">
+            <input type="text" class="input-field" placeholder="驗證碼">
+            <div class="captcha-box" id="captchaBox">----</div>
+            <div class="captcha-actions">
+                驗證碼共5個數字<br>
+                <span class="link-purple" id="refreshCaptcha" style="font-size: 15px;">重新產生</span>
+            </div>
+        </div>
+
+        <div class="btn-row">
+            <button class="action-btn btn-submit">登入</button>
+            <button class="action-btn btn-reset">重新填寫</button>
+        </div>
+
+    </div>
+
+    <div class="bottom-line"></div>
+
+    <script>
+        function generateCaptcha() {
+            let captcha = "";
+            for (let i = 0; i < 5; i++) {
+                captcha += Math.floor(Math.random() * 10);
+            }
+            return captcha.split('').join(' ');
+        }
+
+        const captchaBox = document.getElementById('captchaBox');
+        const refreshBtn = document.getElementById('refreshCaptcha');
+
+        window.addEventListener('DOMContentLoaded', () => {
+            captchaBox.textContent = generateCaptcha();
+        });
+
+        refreshBtn.addEventListener('click', () => {
+            captchaBox.textContent = generateCaptcha();
+        });
+    </script>
+
+</body>
+</html>
