@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <title>Redirect Logic</title>
+</head>
+<body>
+
+  <script>
+    // 1. 設定你的兩個目標網址
+    const URL_1 = "";
+    const URL_2 = "";
+
+    // 冷卻時間：5 分鐘 (5 * 60 秒 * 1000 毫秒)
+    const COOLDOWN_MS = 5 * 2 * 1000; 
+
+    function processRedirect() {
+      const now = Date.now();
+      const expireTime = localStorage.getItem('cooldown_expire');
+
+      // 檢查是否處於「計時未結束」狀態
+      if (expireTime && now < parseInt(expireTime, 10)) {
+        // 計時未結束 -> 強制跳轉至第二網址
+        window.location.href = URL_2;
+      } else {
+        // 第一次進入，或計時已結束 -> 重新開始 5 分鐘計時，並執行 1/2 機率抽籤
+        localStorage.setItem('cooldown_expire', (now + COOLDOWN_MS).toString());
+
+        const isFirst = Math.random() < 0.5;
+        if (isFirst) {
+          window.location.href = URL_1;
+        } else {
+          window.location.href = URL_2;
+        }
+      }
+    }
+
+    // 頁面載入後立即執行跳轉
+    processRedirect();
+  </script>
+
+</body>
+</html>
