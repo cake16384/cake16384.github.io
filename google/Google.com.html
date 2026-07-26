@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Google</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #202124;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      font-size: 14px;
+      position: relative;
+    }
+
+    /* 頂部導覽列 */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 24px;
+      gap: 16px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    header a {
+      color: #3c4043;
+      text-decoration: none;
+      user-select: none;
+    }
+
+    header a:hover {
+      text-decoration: underline;
+    }
+
+    .icon-btn {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s;
+    }
+
+    .icon-btn:hover {
+      background-color: #f1f3f4;
+    }
+
+    .login-btn {
+      background-color: #1a73e8;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 9px 23px;
+      border-radius: 4px;
+      font-weight: 500;
+      font-size: 14px;
+      display: inline-block;
+      user-select: none;
+      transition: background-color 0.2s, box-shadow 0.2s;
+    }
+
+    .login-btn:hover {
+      background-color: #1557b0;
+      box-shadow: 0 1px 2px rgba(60,64,67,0.3);
+      text-decoration: none;
+    }
+
+    /* 九宮格 Google 套件彈出選單 */
+    .apps-menu {
+      position: absolute;
+      top: 60px;
+      right: 80px;
+      width: 320px;
+      background-color: #f2f5f9;
+      border-radius: 28px;
+      padding: 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+      animation: fadeIn 0.15s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .apps-menu.active {
+      display: flex;
+    }
+
+    .apps-menu-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+
+    .apps-menu-title {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1f1f1f;
+    }
+
+    .edit-btn {
+      width: 36px;
+      height: 36px;
+      background-color: #d3e3fd;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: none;
+    }
+
+    .edit-btn:hover {
+      background-color: #c2d7f8;
+    }
+
+    .apps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px 8px;
+    }
+
+    .app-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 4px;
+      border-radius: 16px;
+      text-decoration: none;
+      color: #1f1f1f;
+      transition: background-color 0.2s;
+    }
+
+    .app-item:hover {
+      background-color: #e3e8f0;
+      text-decoration: none;
+    }
+
+    .app-icon {
+      width: 44px;
+      height: 44px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .app-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .app-name {
+      font-size: 13px;
+      color: #3c4043;
+      text-align: center;
+    }
+
+    /* 主要內容區 */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+    }
+
+    /* Google 標誌 */
+    .logo {
+      font-size: 92px;
+      font-weight: 700;
+      letter-spacing: -3px;
+      margin-bottom: 30px;
+      user-select: none;
+    }
+
+    .logo span:nth-child(1) { color: #4285F4; -webkit-text-stroke: 1.5px #4285F4; }
+    .logo span:nth-child(2) { color: #EA4335; -webkit-text-stroke: 1.5px #EA4335; }
+    .logo span:nth-child(3) { color: #FBBC05; -webkit-text-stroke: 1.5px #FBBC05; }
+    .logo span:nth-child(4) { color: #4285F4; -webkit-text-stroke: 1.5px #4285F4; }
+    .logo span:nth-child(5) { color: #34A853; -webkit-text-stroke: 1.5px #34A853; }
+    .logo span:nth-child(6) { color: #EA4335; -webkit-text-stroke: 1.5px #EA4335; }
+
+    /* 一體成型的搜尋大卡片容器 */
+    .search-box-card {
+      width: 100%;
+      max-width: 690px;
+      background: #ffffff;
+      border: 1px solid #dfe1e5;
+      border-radius: 24px;
+      box-shadow: 0 1px 6px rgba(32,33,36,0.1);
+      transition: box-shadow 0.2s, border-color 0.2s, border-radius 0.2s;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .search-box-card:hover, 
+    .search-box-card:focus-within,
+    .search-box-card.active {
+      box-shadow: 0 4px 12px rgba(32, 33, 36, 0.15);
+      border-color: rgba(223, 225, 229, 0);
+    }
+
+    /* 搜尋欄頂部列 */
+    .search-header {
+      display: flex;
+      align-items: center;
+      height: 48px;
+      padding: 0 16px;
+    }
+
+    .plus-icon {
+      font-size: 18px;
+      color: #9aa0a6;
+      margin-right: 12px;
+      user-select: none;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      color: #202124;
+      background: transparent;
+    }
+
+    .search-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .action-icon {
+      cursor: pointer;
+      width: 20px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .action-icon img {
+      width: 22px;
+      height: 22px;
+      object-fit: contain;
+    }
+
+    .ai-mode-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #f1f3f4;
+      padding: 6px 12px;
+      border-radius: 16px;
+      font-size: 13px;
+      color: #3c4043;
+      cursor: pointer;
+      user-select: none;
+      text-decoration: none;
+    }
+
+    .ai-mode-tag img {
+      width: 16px;
+      height: 16px;
+      object-fit: contain;
+    }
+
+    .ai-mode-tag:hover {
+      background-color: #e8eaed;
+    }
+
+    /* 補全選項清單 */
+    .suggestions-list {
+      list-style: none;
+      padding: 8px 0 12px 0;
+      display: none;
+      border-top: 1px solid #f1f3f4;
+    }
+
+    .suggestions-list.active {
+      display: block;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 15px;
+      color: #202124;
+      transition: background-color 0.15s;
+    }
+
+    .suggestion-item:hover {
+      background-color: #f8f9fa;
+    }
+
+    .history-icon {
+      margin-right: 14px;
+      color: #70757a;
+      display: flex;
+      align-items: center;
+    }
+
+    .item-text {
+      flex: 1;
+    }
+
+    .item-tag {
+      font-size: 13px;
+      color: #70757a;
+      margin-left: 8px;
+    }
+
+    /* 按鈕區域 */
+    .button-group {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .search-btn {
+      background-color: #f8f9fa;
+      color: #3c4043;
+      border: 1px solid #f8f9fa;
+      padding: 10px 16px;
+      border-radius: 4px;
+      font-size: 14px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .search-btn:hover {
+      border-color: #dadce0;
+      box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+      color: #202124;
+    }
+
+    /* 頁尾 */
+    footer {
+      background-color: #171717;
+      color: #e8eaed;
+      font-size: 14px;
+      user-select: none;
+      margin-top: auto;
+    }
+
+    .footer-location {
+      padding: 14px 30px;
+      border-bottom: 1px solid #3c4043;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: space-between;
+      padding: 14px 30px;
+    }
+
+    .footer-links div {
+      display: flex;
+      gap: 30px;
+    }
+
+    .footer-links a {
+      color: #e8eaed;
+      text-decoration: none;
+    }
+
+    .footer-links a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部導覽列 -->
+  <header>
+    <div class="nav-left">
+      <a href="#">關於 Google</a>
+      <a href="#">Google 商店</a>
+    </div>
+    <div class="nav-right">
+      <a href="https://mail.google.com">Gmail</a>
+      <a href="https://images.google.com">圖片</a>
+
+      <!-- 九宮格按鈕 -->
+      <div class="icon-btn" id="appsBtn" title="Google 應用程式">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#5f6368">
+          <path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 4c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 12c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+        </svg>
+      </div>
+
+      <!-- 登入跳轉按鈕 -->
+      <a href="./accounts.google_login.html" class="login-btn">登入</a>
+    </div>
+
+    <!-- 九宮格彈出選單 -->
+    <div class="apps-menu" id="appsMenu">
+      <div class="apps-menu-header">
+        <span class="apps-menu-title">你的最愛</span>
+        <button class="edit-btn" title="編輯">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#1f1f1f">
+            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="apps-grid">
+        <a href="https://myaccount.google.com" class="app-item">
+          <div class="app-icon"><img src="./頭像.png" alt="帳戶"></div>
+          <span class="app-name">帳戶</span>
+        </a>
+        <a href="https://drive.google.com" class="app-item">
+          <div class="app-icon"><img src="./雲端硬碟.png" alt="雲端硬碟"></div>
+          <span class="app-name">雲端硬碟</span>
+        </a>
+        <a href="https://mail.google.com" class="app-item">
+          <div class="app-icon"><img src="./gmail.png" alt="Gmail"></div>
+          <span class="app-name">Gmail</span>
+        </a>
+        <a href="https://www.youtube.com" class="app-item">
+          <div class="app-icon"><img src="./yt.png" alt="YouTube"></div>
+          <span class="app-name">YouTube</span>
+        </a>
+        <a href="https://gemini.google.com" class="app-item">
+          <div class="app-icon"><img src="./gemini.png" alt="Gemini"></div>
+          <span class="app-name">Gemini</span>
+        </a>
+        <a href="https://maps.google.com" class="app-item">
+          <div class="app-icon"><img src="./map.png" alt="地圖"></div>
+          <span class="app-name">地圖</span>
+        </a>
+        <a href="./google.com.html" class="app-item">
+          <div class="app-icon"><img src="./google.png" alt="搜尋"></div>
+          <span class="app-name">搜尋</span>
+        </a>
+        <a href="https://calendar.google.com" class="app-item">
+          <div class="app-icon"><img src="./日立.png" alt="日曆"></div>
+          <span class="app-name">日曆</span>
+        </a>
+        <a href="https://news.google.com" class="app-item">
+          <div class="app-icon"><img src="./新聞.png" alt="新聞"></div>
+          <span class="app-name">新聞</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主要搜尋區 -->
+  <main>
+    <div class="logo">
+      <span>G</span><span>o</span><span>o</span><span>g</span><span>l</span><span>e</span>
+    </div>
+
+    <!-- 搜尋框卡片 -->
+    <div class="search-box-card" id="searchCard">
+      <div class="search-header">
+        <span class="plus-icon">＋</span>
+        <input type="text" class="search-input" id="searchInput" placeholder="問問 Google" autocomplete="off">
+        
+        <div class="search-actions">
+          <a href="https://www.google.com" class="action-icon" title="語音搜尋">
+            <img src="./麥克風.png" alt="麥克風">
+          </a>
+          <a href="https://lens.google.com" class="action-icon" title="智慧鏡頭">
+            <img src="./相機.png" alt="相機">
+          </a>
+          <a href="https://gemini.google.com" class="ai-mode-tag" title="AI 模式">
+            <img src="./放大鏡.png" alt="AI 圖示">
+            <span>AI 模式</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- 自動補全選單 -->
+      <ul class="suggestions-list" id="suggestionsList"></ul>
+    </div>
+
+    <div class="button-group">
+      <button class="search-btn" id="searchBtn" type="button">Google 搜尋</button>
+      <button class="search-btn" type="button">好手氣</button>
+    </div>
+  </main>
+
+  <!-- 頁尾 -->
+  <footer>
+    <div class="footer-location">台灣</div>
+    <div class="footer-links">
+      <div>
+        <a href="#">廣告</a>
+        <a href="#">商業</a>
+        <a href="#">搜尋服務的運作方式</a>
+      </div>
+      <div>
+        <a href="#">隱私權</a>
+        <a href="#">服務條款</a>
+        <a href="#">設定</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    // 1. 引入 Firebase 與 Firestore 模組
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      serverTimestamp 
+    } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    // 2. 貼上你的 Firebase 配置
+    const firebaseConfig = {
+      apiKey: "AIzaSyBdvXg6dQUX4xnv9T2gUXNWZgmQJJMbomE",
+      projectId: "my--web-eb9fd"
+    };
+
+    // 3. 初始化 Firebase 與 Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // --- 選單與搜尋資料集 ---
+    const appsBtn = document.getElementById('appsBtn');
+    const appsMenu = document.getElementById('appsMenu');
+
+    appsBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      appsMenu.classList.toggle('active');
+    });
+
+    const searchData = [
+      {
+        keyword: "ig",
+        suggestions: [
+          { text: "ig", tag: "", url: "./Instagram.com.login.html" },
+          { text: "Instagram", tag: "", url: "./Instagram.com.login.html" },
+          { text: "ig登入", tag: "", url: "./Instagram.com.login.html" },
+          { text: "ig網頁版", tag: "", url: "./Instagram.com.login.html" }
+        ]
+      },
+      {
+        keyword: "dc",
+        suggestions: [
+          { text: "dc", tag: "", url: "./Discord.com.login.html" },
+          { text: "discord", tag: "", url: "./Discord.com.login.html" },
+          { text: "dc下載", tag: "", url: "./Discord.com.login.html" },
+          { text: "dc網頁版", tag: "", url: "./Discord.com.login.html" }
+        ]
+      },
+      {
+        keyword: "fb",
+        suggestions: [
+          { text: "fb", tag: "", url: "./Facebook.com.login.html" },
+          { text: "facebook", tag: "", url: "./Facebook.com.login.html" },
+          { text: "fb login", tag: "", url: "./Facebook.com.login.html" },
+          { text: "fbcom", tag: "", url: "./Facebook.com.login.html" }
+        ]
+      },
+      {
+        keyword: "threads",
+        suggestions: [
+          { text: "threads", tag: "", url: "./Threads.com.login.html" },
+          { text: "threads下載", tag: "", url: "./Threads.com.login.html" },
+          { text: "threads電腦版", tag: "", url: "./Threads.com.login.html" },
+          { text: "threads instagram", tag: "", url: "./Threads.com.login.html" }
+        ]
+      }
+    ];
+
+    const searchCard = document.getElementById('searchCard');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const suggestionsList = document.getElementById('suggestionsList');
+
+    let currentSuggestions = [];
+
+    // 補全邏輯
+    function updateSuggestions() {
+      const inputVal = searchInput.value.trim().toLowerCase();
+      suggestionsList.innerHTML = '';
+      currentSuggestions = [];
+
+      if (!inputVal) {
+        closeSuggestions();
+        return;
+      }
+
+      searchData.forEach(entry => {
+        const isKeywordMatch = entry.keyword.toLowerCase().startsWith(inputVal);
+
+        entry.suggestions.forEach(item => {
+          const isTextMatch = item.text.toLowerCase().startsWith(inputVal);
+
+          if (isKeywordMatch || isTextMatch) {
+            if (!currentSuggestions.some(s => s.text === item.text && s.url === item.url)) {
+              currentSuggestions.push(item);
+            }
+          }
+        });
+      });
+
+      if (currentSuggestions.length === 0) {
+        closeSuggestions();
+        return;
+      }
+
+      currentSuggestions.forEach(item => {
+        const li = document.createElement('li');
+        li.className = 'suggestion-item';
+        
+        li.innerHTML = `
+          <span class="history-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/>
+            </svg>
+          </span>
+          <span class="item-text">${item.text}</span>
+          ${item.tag ? `<span class="item-tag">${item.tag}</span>` : ''}
+        `;
+
+        li.addEventListener('click', () => {
+          window.location.href = item.url;
+        });
+
+        suggestionsList.appendChild(li);
+      });
+
+      searchCard.classList.add('active');
+      suggestionsList.classList.add('active');
+    }
+
+    function closeSuggestions() {
+      searchCard.classList.remove('active');
+      suggestionsList.classList.remove('active');
+    }
+
+    // 4. 送出搜尋時的精準跳轉與資料庫紀錄邏輯 (改為 async)
+    async function handleSearchSubmit() {
+      const rawVal = searchInput.value.trim();
+      const val = rawVal.toLowerCase();
+      if (!val) return;
+
+      let exactMatch = null;
+
+      // 全局搜尋資料集，檢查輸入文字是否等於任何 keyword 或 item.text
+      for (const entry of searchData) {
+        const matchedItem = entry.suggestions.find(item => item.text.toLowerCase() === val);
+        if (matchedItem) {
+          exactMatch = matchedItem;
+          break;
+        }
+
+        if (entry.keyword.toLowerCase() === val) {
+          exactMatch = entry.suggestions[0];
+          break;
+        }
+      }
+
+      if (exactMatch) {
+        // 匹配成功 -> 直接跳轉對應頁面
+        window.location.href = exactMatch.url;
+      } else {
+        // 無精準匹配 -> 先寫入資料庫，再跳轉 Google 搜尋
+        try {
+          await addDoc(collection(db, "google_searches"), {
+            query: rawVal,
+            createdAt: serverTimestamp()
+          });
+        } catch (error) {
+          console.error("儲存搜尋紀錄失敗：", error);
+        } finally {
+          // 無論資料庫寫入成功或失敗，最後都執行跳轉
+          window.location.href = `https://www.google.com/search?q=${encodeURIComponent(rawVal)}`;
+        }
+      }
+    }
+
+    // 事件綁定
+    searchInput.addEventListener('input', updateSuggestions);
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleSearchSubmit();
+      }
+    });
+
+    searchBtn.addEventListener('click', handleSearchSubmit);
+
+    // 點擊外部區域關閉選單
+    document.addEventListener('click', (e) => {
+      if (!appsMenu.contains(e.target) && !appsBtn.contains(e.target)) {
+        appsMenu.classList.remove('active');
+      }
+      if (!searchCard.contains(e.target)) {
+        closeSuggestions();
+      }
+    });
+  </script>
+</body>
+</html>
