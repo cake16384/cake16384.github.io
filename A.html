@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>查詢系統</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #4A90E2;
+      --bg-gradient: linear-gradient(135deg, #a8edd9 0%, #fed6e3 100%);
+      --card-bg: #ffffff;
+      --accent-red: #FF6B6B;
+      --accent-green: #2ECC71;
+      --dev-purple: #6C5CE7;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Noto Sans TC', sans-serif; }
+    body { background: var(--bg-gradient); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; }
+    .container { background-color: var(--card-bg); width: 100%; max-width: 500px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1); padding: 30px; position: relative; }
+    .header { text-align: center; margin-bottom: 25px; }
+    .header h1 { font-size: 24px; color: #2C3E50; font-weight: 900; margin-bottom: 6px; }
+    .header p { font-size: 15px; color: #7F8C8D; font-weight: 500; }
+    .badge { display: inline-block; background: #FFEAA7; color: #D35400; font-size: 14px; font-weight: 700; padding: 4px 12px; border-radius: 12px; margin-bottom: 10px; }
+    .form-group { margin-bottom: 18px; }
+    .form-group label { display: block; font-size: 17px; font-weight: 700; color: #34495E; margin-bottom: 8px; }
+    .form-group input { width: 100%; padding: 14px 18px; font-size: 16px; border: 2px solid #E0E0E0; border-radius: 14px; outline: none; }
+    .teacher-tip { font-size: 13px; color: #7F8C8D; margin-top: -10px; margin-bottom: 15px; text-align: right; }
+    .btn { width: 100%; padding: 16px; font-size: 19px; font-weight: 700; color: #fff; background: linear-gradient(90deg, #4A90E2, #67B26F); border: none; border-radius: 14px; cursor: pointer; }
+    .btn-secondary { background: #E0E0E0; color: #333; margin-top: 15px; font-size: 15px; padding: 12px; }
+    .btn-dev { background: var(--dev-purple); color: #fff; margin-top: 10px; font-size: 15px; padding: 12px; display: none; }
+    .result-card { display: none; margin-top: 25px; border-top: 2px dashed #E0E0E0; padding-top: 20px; }
+    .student-info { font-size: 22px; font-weight: 900; color: #2C3E50; text-align: center; margin-bottom: 15px; }
+    .score-board { display: flex; justify-content: space-around; background: #F8F9FA; padding: 18px; border-radius: 16px; margin-bottom: 20px; text-align: center; }
+    .score-item .label { font-size: 15px; color: #7F8C8D; font-weight: 700; }
+    .score-item .value { font-size: 32px; font-weight: 900; color: var(--primary-color); font-family: 'Fredoka', sans-serif; }
+    .wrong-title { font-size: 17px; font-weight: 700; color: #34495E; margin-bottom: 12px; }
+    .wrong-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .wrong-chip { background: #FF7675; color: #fff; font-size: 15px; font-weight: 700; padding: 8px 14px; border-radius: 10px; cursor: pointer; }
+
+    /* Modal 彈出視窗樣式 */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); justify-content: center; align-items: center; z-index: 1000; padding: 20px; }
+    .modal-content { background: #FFF; width: 100%; max-width: 480px; border-radius: 20px; padding: 25px; max-height: 80vh; overflow-y: auto; }
+    .modal-header { font-size: 20px; font-weight: 900; color: #2C3E50; margin-bottom: 15px; }
+    .modal-body { font-size: 16px; line-height: 1.6; color: #333; }
+    .modal-option { margin: 8px 0; padding: 10px 14px; border-radius: 10px; background: #F1F2F6; font-size: 15px; }
+    .modal-option.correct { background: #D4EDDA; color: #155724; font-weight: 700; border: 1.5px solid #C3E6CB; }
+    .modal-close { margin-top: 20px; width: 100%; padding: 12px; background: #74B9FF; color: #FFF; font-size: 16px; font-weight: 700; border: none; border-radius: 10px; cursor: pointer; }
+
+    /* 開發者全班表格樣式 */
+    .dev-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
+    .dev-table th, .dev-table td { border: 1px solid #E0E0E0; padding: 8px 10px; text-align: center; }
+    .dev-table th { background: #F1F2F6; color: #2C3E50; font-weight: 700; }
+    .dev-table tr:nth-child(even) { background: #FAFAFA; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <span class="badge"> 902 班</span>
+      <h1>115學年</h1>
+      <p>國文系統</p>
+    </div>
+
+    <div class="form-group">
+      <label for="seatNum">學生座號</label>
+      <input type="number" id="seatNum" placeholder="請輸入座號（例如：26）" min="1" max="99">
+    </div>
+
+    <div class="form-group">
+      <label for="password">個人密碼</label>
+      <input type="password" id="password" placeholder="預設生日（民國年3碼+月2碼+日2碼，共7碼）">
+    </div>
+    <div class="teacher-tip">💡 首次登入示範：1010622｜測試通道：座號 99，密碼 888</div>
+
+    <button class="btn" id="searchBtn" onclick="checkScore()">查詢</button>
+
+    <div class="result-card" id="resultCard">
+      <div class="student-info" id="studentName">-- 號 學生</div>
+
+      <div class="score-board">
+        <div class="score-item">
+          <div class="label">段考總分</div>
+          <div class="value" id="scoreVal">--</div>
+        </div>
+        <div class="score-item">
+          <div class="label">班級名次</div>
+          <div class="value" id="rankVal">--</div>
+        </div>
+      </div>
+
+      <div class="wrong-title">錯題檢討（點擊按鈕查看解析）：</div>
+      <div class="wrong-grid" id="wrongGrid"></div>
+
+      <button class="btn btn-secondary" onclick="openPwdModal()">🔒 變更密碼</button>
+      <button class="btn btn-dev" id="devAllScoresBtn" onclick="openDevModal()">🛠️ 開發者功能：全班總成績預覽</button>
+    </div>
+  </div>
+
+  <!-- 1. 題目詳情 Modal -->
+  <div class="modal-overlay" id="questionModal">
+    <div class="modal-content">
+      <div class="modal-header" id="modalQuestionNum">第 -- 題 題目檢討</div>
+      <div class="modal-body">
+        <p id="modalQuestionText" style="margin-bottom: 12px; font-weight:700;"></p>
+        <div id="modalOptions"></div>
+        <hr style="margin: 15px 0; border: none; border-top: 1px #EEE dashed;">
+        <p style="margin-top: 4px;"><strong>【正確答案】：</strong><span id="modalCorrectAns" style="color: var(--accent-green); font-weight: 900;"></span></p>
+        <p style="margin-top: 8px; color: #555;"><strong>【詳細解析】：</strong><span id="modalAnalysis"></span></p>
+      </div>
+      <button class="modal-close" onclick="closeModal('questionModal')">關閉檢討視窗</button>
+    </div>
+  </div>
+
+  <!-- 2. 變更密碼 Modal -->
+  <div class="modal-overlay" id="pwdModal">
+    <div class="modal-content">
+      <div class="modal-header">變更個人防護密碼</div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="oldPwd">目前密碼（首次請填 7 碼生日）</label>
+          <input type="password" id="oldPwd" placeholder="例如：1010622">
+        </div>
+        <div class="form-group">
+          <label for="newPwd">設定新密碼</label>
+          <input type="password" id="newPwd" placeholder="請輸入自訂新密碼">
+        </div>
+        <div class="form-group">
+          <label for="confirmPwd">確認新密碼</label>
+          <input type="password" id="confirmPwd" placeholder="再次輸入新密碼">
+        </div>
+        <button class="btn" onclick="submitChangePwd()">確認更新密碼</button>
+      </div>
+      <button class="modal-close" style="background:#A4B0BE;" onclick="closeModal('pwdModal')">取消</button>
+    </div>
+  </div>
+
+  <!-- 3. 開發者全班成績 Modal -->
+  <div class="modal-overlay" id="devModal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">📊 全班成績一覽表 (開發者檢視面板)</div>
+      <div class="modal-body">
+        <div id="devScoreTableContainer" style="overflow-x: auto;">
+          資料載入中...
+        </div>
+      </div>
+      <button class="modal-close" style="background: var(--dev-purple);" onclick="closeModal('devModal')">關閉視窗</button>
+    </div>
+  </div>
+
+  <script>
+    let currentStudent = null;
+
+    function checkScore() {
+      const seatInput = document.getElementById('seatNum').value.trim();
+      const pwdInput = document.getElementById('password').value.trim();
+
+      if (!seatInput || !pwdInput) {
+        alert('請輸入座號與個人防護密碼（預設生日 7 碼）！');
+        return;
+      }
+
+      const seat = parseInt(seatInput, 10);
+      document.getElementById('searchBtn').innerText = '資料讀取中...';
+
+      google.script.run
+        .withSuccessHandler(onSuccess)
+        .withFailureHandler(onFailure)
+        .getStudentData(seat, pwdInput);
+    }
+
+    function onSuccess(res) {
+      document.getElementById('searchBtn').innerText = '立即安全查詢';
+
+      if (!res.success) {
+        alert(res.message);
+        return;
+      }
+
+      currentStudent = res.seat;
+      document.getElementById('studentName').innerText = res.isTeacher ? res.name : `${res.seat} 號 ${res.name}`;
+      document.getElementById('scoreVal').innerText = res.score;
+      document.getElementById('rankVal').innerText = res.rank;
+
+      // 判斷是否為座號 99 或老師，若是則顯示開發者按鈕
+      const devBtn = document.getElementById('devAllScoresBtn');
+      if (res.isTeacher || res.seat === 99) {
+        devBtn.style.display = 'block';
+      } else {
+        devBtn.style.display = 'none';
+      }
+
+      const wrongGrid = document.getElementById('wrongGrid');
+      wrongGrid.innerHTML = '';
+
+      if (!res.wrongQuestions || res.wrongQuestions.length === 0) {
+        wrongGrid.innerHTML = '<p style="color:#2ECC71; font-weight:700;">恭喜您！本試卷全部答對無錯題。</p>';
+      } else {
+        res.wrongQuestions.forEach(qNum => {
+          const chip = document.createElement('div');
+          chip.className = 'wrong-chip';
+          chip.innerText = `第 ${qNum} 題`;
+          chip.onclick = () => openModal(qNum);
+          wrongGrid.appendChild(chip);
+        });
+      }
+
+      document.getElementById('resultCard').style.display = 'block';
+    }
+
+    function onFailure(error) {
+      document.getElementById('searchBtn').innerText = '立即安全查詢';
+      alert('讀取失敗，請確認網路連線與試算表設定！');
+    }
+
+    function openModal(qNum) {
+      document.getElementById('modalQuestionNum').innerText = `第 ${qNum} 題 載入中...`;
+      document.getElementById('modalQuestionText').innerText = '正在讀取題目內容...';
+      document.getElementById('modalOptions').innerHTML = '';
+      document.getElementById('questionModal').style.display = 'flex';
+
+      google.script.run
+        .withSuccessHandler(renderModal)
+        .getQuestionDetail(currentStudent, qNum);
+    }
+
+    function renderModal(q) {
+      document.getElementById('modalQuestionNum').innerText = `第 ${q.qNum} 題 題目檢討`;
+      document.getElementById('modalQuestionText').innerText = q.title;
+
+      const opts = [
+        { code: 'A', text: q.optionA },
+        { code: 'B', text: q.optionB },
+        { code: 'C', text: q.optionC },
+        { code: 'D', text: q.optionD }
+      ];
+
+      let optionsHTML = '';
+      opts.forEach(opt => {
+        let styleClass = 'modal-option';
+        let markText = '';
+
+        if (opt.code === q.correctAns) {
+          styleClass += ' correct';
+          markText = ' ✔ (標準答案)';
+        }
+
+        optionsHTML += `<div class="styleClass">{opt.code}. opt.text{markText}</div>`;
+      });
+
+      document.getElementById('modalOptions').innerHTML = optionsHTML;
+      document.getElementById('modalCorrectAns').innerText = q.correctAns;
+      document.getElementById('modalAnalysis').innerText = q.analysis || '暫無解析';
+    }
+
+    function openPwdModal() {
+      document.getElementById('oldPwd').value = '';
+      document.getElementById('newPwd').value = '';
+      document.getElementById('confirmPwd').value = '';
+      document.getElementById('pwdModal').style.display = 'flex';
+    }
+
+    function submitChangePwd() {
+      const oldPwd = document.getElementById('oldPwd').value.trim();
+      const newPwd = document.getElementById('newPwd').value.trim();
+      const confirmPwd = document.getElementById('confirmPwd').value.trim();
+
+      if (!oldPwd || !newPwd || !confirmPwd) {
+        alert('請完整填寫所有欄位！');
+        return;
+      }
+
+      if (newPwd !== confirmPwd) {
+        alert('兩次輸入的新密碼不一致！');
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(res => {
+          alert(res.message);
+          if (res.success) {
+            closeModal('pwdModal');
+          }
+        })
+        .changePassword(currentStudent, oldPwd, newPwd);
+    }
+
+    // 開啟全班成績面板 (純前端呈現)
+    function openDevModal() {
+      document.getElementById('devModal').style.display = 'flex';
+      
+      let tableHTML = `
+        <table class="dev-table">
+          <thead>
+            <tr>
+              <th>權限身份</th>
+              <th>當前帳號</th>
+              <th>狀態</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>開發者 / 教師</strong></td>
+              <td>${currentStudent} 號</td>
+              <td><span style="color:#2ECC71; font-weight:bold;">已成功通過權限驗證</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <div style="margin-top:15px; padding:12px; background:#F8F9FA; border-radius:10px; font-size:13px; color:#555;">
+          💡 <strong>開發者提示：</strong><br>
+          目前已開啟前端開發者面板。若需要在此表格中實時顯示 Google 試算表內「全班所有學生的成績與錯題號碼」，請告知我將後端 <code>Code.gs</code> 補上對應的讀取函數。
+        </div>
+      `;
+      
+      document.getElementById('devScoreTableContainer').innerHTML = tableHTML;
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).style.display = 'none';
+    }
+  </script>
+</body>
+</html>
+
+
